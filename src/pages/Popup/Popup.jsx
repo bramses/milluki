@@ -1,16 +1,18 @@
 import React from 'react';
-import logo from '../../assets/img/logo.svg';
-import Greetings from '../../containers/Greetings/Greetings';
 import './Popup.css';
 import Calendar from 'react-calendar'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { downloadHistory, removeDuplicatesFromHistory, parseHistoryJSON } from './history';
 
 const Popup = () => {
   const [value, setValue] = useState(new Date());
 
-  const onChange = (value) => {
+  const onChange = async (value) => {
     setValue(value);
-    console.log(value);
+    let history = await downloadHistory(value);
+    const uniqueHistory = removeDuplicatesFromHistory(history);
+    const md = parseHistoryJSON(uniqueHistory);
+    console.log(md);
   }
 
   return (
