@@ -13,6 +13,11 @@ const Popup = () => {
     const uniqueHistory = removeDuplicatesFromHistory(history);
     const md = parseHistoryJSON(uniqueHistory);
     console.log(md);
+    navigator.clipboard.writeText(md).then(() => {
+      //clipboard successfully set
+  }, () => {
+      //clipboard write failed, use fallback
+  });
   }
 
   return (
