@@ -9,7 +9,6 @@ const history = {
 };
 
 export const removeDuplicatesFromHistory = (history) => {
-  console.log(history.length);
   // create an empty array to store the unique history
   const uniqueHistory = [];
   // create an empty object to store the unique history
