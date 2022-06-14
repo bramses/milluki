@@ -14,7 +14,10 @@ const Popup = () => {
     const md = parseHistoryJSON(uniqueHistory);
     console.log(md);
 
-    chrome.tabs.create({url: chrome.runtime.getURL("editor.html"), active: false});
+    chrome.runtime.sendMessage({action: 'setSource', source: md}, function(response) {
+      console.log(response);
+    });
+    
 
     // navigator.clipboard.writeText(md).then(() => {
     //   //clipboard successfully set
