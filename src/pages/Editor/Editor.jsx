@@ -1,7 +1,43 @@
 import React from 'react';
 import { useState } from 'react';
+import { parseHistoryJSON } from '../Popup/history';
 
-// todo figure out how to do multiple projects and remove them from the master list of projects
+// const parseHistoryJSON = (history) => {
+//   let markdown = `| title | date |`;
+//   // loop through the history
+//   for (let i = 0; i < history.length; i++) {
+//     // get the current item
+//     const item = history[i];
+//     // create a date object from the last visit time
+//     const date = new Date(item.lastVisitTime);
+//     // get the day
+//     let day = date.getDate();
+//     // get the month
+//     let month = date.getMonth() + 1;
+//     // if the day is less than 10, add a 0 to the front
+//     if (day < 10) {
+//       day = `0${day}`;
+//     }
+//     // if the month is less than 10, add a 0 to the front
+//     if (month < 10) {
+//       month = `0${month}`;
+//     }
+//     // get the year
+//     const year = date.getFullYear();
+//     // get the time
+//     const time = date.toLocaleTimeString();
+//     // create a date string
+//     const dateString = `${year}-${month}-${day}`;
+//     // add the markdown to the markdown variable
+
+//     markdown += `\n| [${item.title
+//       .replace(/\[/g, '')
+//       .replace(/]/g, '')
+//       .replace(/\|/g, '-')}](${item.url}) | [[${dateString}]] ${time} |`;
+//   }
+//   // return the markdown
+//   return markdown;
+// };
 
 const Editor = () => {
   const [history, setHistory] = useState([{}]);
@@ -39,6 +75,22 @@ const Editor = () => {
     console.log(updatedList);
   };
 
+  const projectsToMarkdown = (groupedProjects) => {
+    let md = ``;
+    console.log(groupedProjects);
+    const keys = Object.keys(groupedProjects);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const value = groupedProjects[key];
+      parseHistoryJSON(value);
+      md += `\n\n## ${key}\n`;
+      md += parseHistoryJSON(value);
+    }
+
+    console.log(md);
+    return md;
+  };
+
   // when project input is changed add it to running object of projects and remove its last
   const handleAppend = (event) => {
     var updatedList = [...projects];
@@ -57,10 +109,6 @@ const Editor = () => {
     }
     setProjects(updatedList);
     console.log(updatedList);
-  };
-
-  const sendBackProjects = () => {
-    const results = {};
   };
 
   const groupProjectsByName = () => {
@@ -89,15 +137,6 @@ const Editor = () => {
     }
     console.log(groupedProjectIds);
     return groupedProjectIds.flat();
-  };
-
-  const findProjectById = (groupedProjects, id) => {
-    for (const key in groupedProjects) {
-      const project = groupedProjects[key];
-      if (project.find((p) => p.id === id)) {
-        return project;
-      }
-    }
   };
 
   const submit = () => {
@@ -129,14 +168,8 @@ const Editor = () => {
       }
     }
 
-    // updatedList.reverse().forEach((item) => {
-    //   if (_groupedProjectIds.includes(item.id)) {
-    //     updatedList.splice(history.indexOf(item), 1);
-    //   }
-    // });
-
     console.log('## Projects ##');
-    console.log(groupedProjects);
+    console.log(projectsToMarkdown(groupedProjects));
     console.log(`## Rest of History`);
     console.log(updatedList);
   };
@@ -172,7 +205,6 @@ const Editor = () => {
             );
           })}
           <button onClick={submit}>submit</button>
-          <button onClick={submit}>Copy Markdown</button>
         </div>
       ) : null}
       {/* <ul>
