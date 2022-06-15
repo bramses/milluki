@@ -9,6 +9,7 @@ const Editor = () => {
   const [checked, setChecked] = useState([]);
   const [project, setProject] = useState({});
   const [projectName, setProjectName] = useState('');
+  const [projects, setProjects] = useState([]);
 
   var port = chrome.runtime.connect({ name: 'getSource' });
 
@@ -17,6 +18,7 @@ const Editor = () => {
     port.onMessage.addListener(function (msg) {
       console.log(msg);
       setHistory(msg.source);
+      setProjects(new Array(msg.source.length).fill(0));
       setActivate(true);
     });
 
@@ -38,24 +40,88 @@ const Editor = () => {
     console.log(updatedList);
   };
 
+  // when project input is changed add it to running object of projects and remove its last
+  const handleAppend = (event) => {
+    var updatedList = [...projects];
+    if (event.target.value !== '') {
+      if (projects[Number(event.target.getAttribute('idx'))] !== 0) {
+        updatedList[Number(event.target.getAttribute('idx'))].name =
+          event.target.value;
+      } else {
+        updatedList[Number(event.target.getAttribute('idx'))] = {
+          name: event.target.value,
+          id: event.target.id,
+        };
+      }
+    } else {
+      updatedList[Number(event.target.getAttribute('idx'))] = 0;
+    }
+    setProjects(updatedList);
+    console.log(updatedList);
+  };
+
   const sendBackProjects = () => {
     const results = {};
   };
 
+  const groupProjectsByName = () => {
+    const groupedProjects = {};
+    projects.forEach((project) => {
+      if (project !== 0) {
+        if (project.name !== '') {
+          if (groupedProjects[project.name]) {
+            groupedProjects[project.name].push(project);
+          } else {
+            groupedProjects[project.name] = [project];
+          }
+        }
+      }
+    });
+    return groupedProjects;
+  };
+
+  const groupedProjectIds = (groupedProjects) => {
+    const groupedProjectIds = [];
+    for (const key in groupedProjects) {
+      const project = groupedProjects[key];
+      groupedProjectIds.push(project.map((p) => p.id));
+    }
+    console.log(groupedProjectIds);
+    return groupedProjectIds.flat();
+  };
+
   const submit = () => {
+    const groupedProjects = groupProjectsByName();
+    const _groupedProjectIds = groupedProjectIds(groupedProjects);
     // splice out the checked items from the history and put them in a new array
-    const projectHistory = history.filter((item) => {
-      return checked.includes(item.id);
-    });
 
-    const newHistory = history.filter((item) => {
-      return !checked.includes(item.id);
-    });
+    // grouped projects = { name: [{ id}] }
 
-    console.log(`## ${projectName}`);
-    console.log(projectHistory);
+    // const updatedList = [...history];
+    // Object.keys(groupedProjects).forEach((key) => {
+    //   const links = groupedProjects[key];
+    //   const fullItem = history.filter((item) => {
+    //     return links.find((link) => Number(link.id) === Number(item.id));
+    //   });
+    //   console.log(fullItem);
+    //   groupedProjects[key] = fullItem;
+
+    //   updatedList.splice(history.indexOf(fullItem[0]), 1);
+    // });
+    // setHistory(updatedList);
+
+    const updatedList = [...history];
+    updatedList.forEach((item) => {
+      if (_groupedProjectIds.includes(item.id)) {
+        updatedList.splice(history.indexOf(item), 1);
+      }
+    });
+    setHistory(updatedList);
+
+    console.log('## Projects ##');
+    console.log(groupedProjects);
     console.log(`## Rest of History`);
-    console.log(newHistory);
+    console.log(updatedList);
   };
 
   const handleProjectName = (event) => {
@@ -72,18 +138,19 @@ const Editor = () => {
       {/* <button onClick={addProject}>add project</button> */}
       {activate ? (
         <div>
-          <input
+          {/* <input
             placeholder="project name"
             onChange={handleProjectName}
-          ></input>
+          ></input> */}
           {history.map((item, index) => {
             return (
               <div key={index}>
                 <input
-                  value={item.id}
-                  type={'checkbox'}
+                  placeholder="project name"
+                  type={'text'}
                   id={item.id}
-                  onChange={handleCheck}
+                  idx={index}
+                  onChange={handleAppend}
                 />
                 <label htmlFor={item.id}>
                   {item.title} (
