@@ -10,6 +10,7 @@ import {
 
 const Popup = () => {
   const [value, setValue] = useState(new Date());
+  const [showProjectEditor, setShowProjecEditor] = useState(true);
 
   var port = chrome.runtime.connect({ name: 'setSource' });
   const onChange = async (value) => {
@@ -48,10 +49,16 @@ const Popup = () => {
     // });
   };
 
+  const handleCheck = (event) => {
+    console.log(event.target.checked);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <Calendar onChange={onChange} value={value} />
+        <input type="checkbox" onChange={handleCheck} id="show-editor-input" />
+        <label htmlFor={'show-editor-input'}>Show Project Editor</label>
       </header>
     </div>
   );

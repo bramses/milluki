@@ -1,6 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 
+// todo figure out how to do multiple projects and remove them from the master list of projects
+
 const Editor = () => {
   const [history, setHistory] = useState([{}]);
   const [activate, setActivate] = useState(false);
