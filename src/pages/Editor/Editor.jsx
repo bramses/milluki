@@ -16,7 +16,6 @@ const Editor = () => {
   const fetchHistory = () => {
     port.postMessage({ action: 'getSource' });
     port.onMessage.addListener(function (msg) {
-      console.log(msg);
       setHistory(msg.source);
       setProjects(new Array(msg.source.length).fill(0));
       setActivate(true);
@@ -50,7 +49,7 @@ const Editor = () => {
       } else {
         updatedList[Number(event.target.getAttribute('idx'))] = {
           name: event.target.value,
-          id: event.target.id,
+          ...JSON.parse(event.target.getAttribute('full')),
         };
       }
     } else {
@@ -84,10 +83,21 @@ const Editor = () => {
     const groupedProjectIds = [];
     for (const key in groupedProjects) {
       const project = groupedProjects[key];
-      groupedProjectIds.push(project.map((p) => p.id));
+      groupedProjectIds.push(
+        project.map((p) => ({ id: p.id, name: p.name, key }))
+      );
     }
     console.log(groupedProjectIds);
     return groupedProjectIds.flat();
+  };
+
+  const findProjectById = (groupedProjects, id) => {
+    for (const key in groupedProjects) {
+      const project = groupedProjects[key];
+      if (project.find((p) => p.id === id)) {
+        return project;
+      }
+    }
   };
 
   const submit = () => {
@@ -111,21 +121,24 @@ const Editor = () => {
     // setHistory(updatedList);
 
     const updatedList = [...history];
-    updatedList.forEach((item) => {
-      if (_groupedProjectIds.includes(item.id)) {
-        updatedList.splice(history.indexOf(item), 1);
+    const ids = _groupedProjectIds.map((p) => p.id);
+
+    for (let i = updatedList.length - 1; i >= 0; i--) {
+      if (ids.includes(updatedList[i].id)) {
+        updatedList.splice(i, 1);
       }
-    });
-    setHistory(updatedList);
+    }
+
+    // updatedList.reverse().forEach((item) => {
+    //   if (_groupedProjectIds.includes(item.id)) {
+    //     updatedList.splice(history.indexOf(item), 1);
+    //   }
+    // });
 
     console.log('## Projects ##');
     console.log(groupedProjects);
     console.log(`## Rest of History`);
     console.log(updatedList);
-  };
-
-  const handleProjectName = (event) => {
-    setProjectName(event.target.value);
   };
 
   return (
@@ -135,13 +148,8 @@ const Editor = () => {
         fetchHistory (from message -- race issues)
       </button>
       <br />
-      {/* <button onClick={addProject}>add project</button> */}
       {activate ? (
         <div>
-          {/* <input
-            placeholder="project name"
-            onChange={handleProjectName}
-          ></input> */}
           {history.map((item, index) => {
             return (
               <div key={index}>
@@ -150,6 +158,7 @@ const Editor = () => {
                   type={'text'}
                   id={item.id}
                   idx={index}
+                  full={JSON.stringify(item)}
                   onChange={handleAppend}
                 />
                 <label htmlFor={item.id}>
