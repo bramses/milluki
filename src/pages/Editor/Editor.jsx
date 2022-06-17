@@ -6,6 +6,8 @@ const Editor = () => {
   const [history, setHistory] = useState([{}]);
   const [activate, setActivate] = useState(false);
   const [projects, setProjects] = useState([]);
+  const [datalist, setDatalist] = useState([]);
+  const [datalistSet, setDatalistSet] = useState(new Set());
 
   var port = chrome.runtime.connect({ name: 'getSource' });
 
@@ -14,6 +16,7 @@ const Editor = () => {
     port.onMessage.addListener(function (msg) {
       setHistory(msg.source);
       setProjects(new Array(msg.source.length).fill(0));
+      setDatalist(new Array(msg.source.length).fill(0));
       setActivate(true);
     });
   };
@@ -35,20 +38,31 @@ const Editor = () => {
   // when project input is changed add it to running object of projects and remove its last
   const handleAppend = (event) => {
     var updatedList = [...projects];
+    const updatedDatalist = [...datalist];
+
     if (event.target.value !== '') {
       if (projects[Number(event.target.getAttribute('idx'))] !== 0) {
         updatedList[Number(event.target.getAttribute('idx'))].name =
+          event.target.value;
+        updatedDatalist[Number(event.target.getAttribute('idx'))] =
           event.target.value;
       } else {
         updatedList[Number(event.target.getAttribute('idx'))] = {
           name: event.target.value,
           ...JSON.parse(event.target.getAttribute('full')),
         };
+        updatedDatalist[Number(event.target.getAttribute('idx'))] =
+          event.target.value;
       }
     } else {
       updatedList[Number(event.target.getAttribute('idx'))] = 0;
+      updatedDatalist[Number(event.target.getAttribute('idx'))] = 0;
     }
+
     setProjects(updatedList);
+    setDatalist(updatedDatalist);
+    setDatalistSet(new Set(updatedDatalist.filter((item) => item !== 0)));
+    console.log(updatedDatalist);
     // console.log(updatedList);
   };
 
@@ -125,6 +139,7 @@ const Editor = () => {
                   type={'text'}
                   id={item.id}
                   idx={index}
+                  list="projects"
                   full={JSON.stringify(item)}
                   onChange={handleAppend}
                 />
@@ -135,6 +150,15 @@ const Editor = () => {
                   </a>
                   )
                 </label>
+                <datalist id="projects">
+                  {Array.from(datalistSet).map((project, index) => {
+                    return (
+                      <option key={index} value={project}>
+                        {project}
+                      </option>
+                    );
+                  })}
+                </datalist>
               </div>
             );
           })}
