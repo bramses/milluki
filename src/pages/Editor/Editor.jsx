@@ -115,6 +115,7 @@ const Editor = () => {
     navigator.clipboard.writeText(finalString).then(
       () => {
         //clipboard successfully set
+        alert('Copied to clipboard!');
       },
       () => {
         //clipboard write failed, use fallback
