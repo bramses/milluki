@@ -67,7 +67,7 @@ const Popup = () => {
         <input
           type="checkbox"
           onChange={handleCheck}
-          checked={true}
+          checked={showProjectEditor}
           id="show-editor-input"
         />
         <label htmlFor={'show-editor-input'}>Show Project Editor</label>
