@@ -12,5 +12,5 @@ To run locally, look at the [Installing and Running section of the Chrome Extens
 ## the project editor allows for tagging links, as well as easily jumping to a url
 <img width="533" alt="2022-06-19--21-31-41" src="https://user-images.githubusercontent.com/3282661/174515455-4ecc1541-a405-47c3-b5dc-d3ed3159fe28.png">
 
-in obsidian, links are turned into markdown titles and tied to timestamp visited
+## in obsidian, links are turned into markdown titles and tied to timestamp visited
 <img width="664" alt="2022-06-19--21-33-04" src="https://user-images.githubusercontent.com/3282661/174515458-b716a895-aca0-418e-8497-9bff142ea33a.png">
