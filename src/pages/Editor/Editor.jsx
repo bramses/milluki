@@ -26,6 +26,10 @@ const Editor = () => {
     const keys = Object.keys(groupedProjects);
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
+      if (key === '_delete') {
+        continue;
+      }
+
       const value = groupedProjects[key];
       parseHistoryJSON(value);
       md += `\n\n# ${key}\n\n`;
