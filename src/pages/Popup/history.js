@@ -26,6 +26,13 @@ export const removeDuplicatesFromHistory = (history) => {
 };
 
 export const parseHistoryJSON = (history) => {
+  if (!history || history[0] === undefined) {
+    console.log('no history');
+    return [];
+  }
+
+  console.log(history);
+
   let markdown = `| title | date |`;
   // loop through the history
   for (let i = 0; i < history.length; i++) {

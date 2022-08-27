@@ -131,12 +131,17 @@ const Editor = () => {
 
   return (
     <div className="App">
-      <div>historyJSON</div>
+      <div>
+        historyJSON for date:{' '}
+        {activate && history
+          ? JSON.stringify(parseHistoryJSON([history[0]]))
+          : null}
+      </div>
       <button onClick={fetchHistory}>start</button>
       <br />
       {activate ? (
         <div>
-          {history.map((item, index) => {
+          {history.reverse().map((item, index) => {
             return (
               <div key={index}>
                 <input

@@ -31,7 +31,7 @@ chrome.runtime.onConnect.addListener(function (port) {
   if (port.name !== 'setSource') {
     return;
   }
-  console.log('recieved: ' + port);
+  console.log('recieved: ' + JSON.stringify(port));
   port.onMessage.addListener(function (msg) {
     console.log('opening tab');
     history = msg.source;
