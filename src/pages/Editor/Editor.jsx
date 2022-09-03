@@ -141,7 +141,7 @@ const Editor = () => {
       <br />
       {activate ? (
         <div>
-          {history.reverse().map((item, index) => {
+          {history.map((item, index) => {
             return (
               <div key={index}>
                 <input
