@@ -31,8 +31,6 @@ export const parseHistoryJSON = (history) => {
     return [];
   }
 
-  console.log(history);
-
   let markdown = `| title | date |`;
   // loop through the history
   for (let i = 0; i < history.length; i++) {

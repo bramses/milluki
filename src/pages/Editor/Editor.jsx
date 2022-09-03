@@ -14,7 +14,11 @@ const Editor = () => {
   const fetchHistory = () => {
     port.postMessage({ action: 'getSource' });
     port.onMessage.addListener(function (msg) {
-      setHistory(msg.source);
+      setHistory(
+        msg.source.filter(
+          (item) => !item.title.includes('https://www.google.com/search?q=')
+        )
+      );
       setProjects(new Array(msg.source.length).fill(0));
       setDatalist(new Array(msg.source.length).fill(0));
       setActivate(true);
@@ -134,7 +138,7 @@ const Editor = () => {
       <div>
         historyJSON for date:{' '}
         {activate && history
-          ? JSON.stringify(parseHistoryJSON([history[0]]))
+          ? JSON.stringify(parseHistoryJSON([history[history.length - 1]]))
           : null}
       </div>
       <button onClick={fetchHistory}>start</button>
